@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getQuotationItems, createQuotation } from "../../services/vendorQuotationService";
 import RequisitionSelector from "../common/RequisitionSelector";
 import VendorSelector from "../common/VendorSelector";
-import { FaFileInvoiceDolla, FaUserTie, FaBoxOpen, FaClipboardList, FaCheckCircle, FaSearch, FaSave } from "react-icons/fa";
+import { FaFileInvoiceDollar, FaUserTie, FaBoxOpen, FaClipboardList, FaCheckCircle, FaSearch, FaSave } from "react-icons/fa";
 
 
 const VendorQuotationDetails = () => {
@@ -257,7 +257,7 @@ const VendorQuotationDetails = () => {
                         <td className="px-4 py-3 text-right font-bold text-slate-800">
                           {((parseFloat(item.quantity) || 0) * (parseFloat(item.quoted_rate) || 0)).toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-slate-600 italic max-w-[150px] truncate">
+                        <td className="px-4 py-3 text-slate-600 italic max-w-37.5 truncate">
                           {/* Display only for now as requested payload didn't include updating remarks */}
                           {item.remarks || "-"}
                         </td>

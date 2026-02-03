@@ -47,7 +47,7 @@ const QuotationComparison = () => {
         };
 
         fetchData();
-    }, [selectedRequisition]);
+    }, [selectedRequisition, setError]);
 
     const handleItemSelect = (productCode, itemId) => {
         setSelectedItems(prev => {
@@ -303,7 +303,7 @@ const QuotationComparison = () => {
                             <thead>
                                 <tr className="bg-slate-100 text-slate-600 border-b border-slate-300 text-xs uppercase tracking-wider">
                                     {/* STICKY FIRST COLUMN HEADER */}
-                                    <th className="sticky left-0 bg-slate-100 z-20 px-4 py-3 border-r border-slate-400 min-w-[250px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                                    <th className="sticky left-0 bg-slate-100 z-20 px-4 py-3 border-r border-slate-400 min-w-62.5 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
                                         Product Details
                                     </th>
 
@@ -311,10 +311,10 @@ const QuotationComparison = () => {
                                     {/* Assume each vendor might have multiple quotations, we flatten them */}
                                     {data.vendors.map((vendor, vIdx) => (
                                         vendor.quotations.map((q, qIdx) => (
-                                            <th key={`${vIdx}-${qIdx}`} className="px-4 py-3 min-w-[220px] border-r border-slate-300 bg-slate-50/50">
+                                            <th key={`${vIdx}-${qIdx}`} className="px-4 py-3 min-w-55 border-r border-slate-300 bg-slate-50/50">
                                                 <div className="flex flex-col gap-2">
                                                     <div>
-                                                        <div className="font-bold text-slate-800 text-sm truncate max-w-[200px]" title={vendor.vendor_name}>
+                                                        <div className="font-bold text-slate-800 text-sm truncate max-w-50" title={vendor.vendor_name}>
                                                             {vendor.vendor_name}
                                                         </div>
                                                         <div className="flex items-center justify-between text-[10px] text-slate-500 mt-1">

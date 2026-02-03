@@ -119,7 +119,7 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
       });
       setIsAssigned(false);
     }
-  }, [editData, open]);
+  }, [editData, open, viewOnly]);
 
 
   if (!open) return null;
@@ -184,7 +184,7 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
 
   return (
     <div
-      className="fixed inset-0  bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300"
+      className="fixed inset-0  bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-100 p-4 animate-in fade-in duration-300"
     // Backdrop click should NOT close modal per user request
     >
       <div
@@ -308,7 +308,7 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
                   {/* Unit Column - Dedicated */}
                   <div className="w-24 space-y-1.5">
                     <label className="text-[11px] font-bold text-slate-500 uppercase">Unit</label>
-                    <div className="h-[42px] px-3 flex items-center bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-600 font-medium">
+                    <div className="h-10.5 px-3 flex items-center bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-600 font-medium">
                       {item.unit || "UNIT"}
                     </div>
                   </div>
@@ -373,7 +373,7 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
           {!viewOnly && (
             <button
               onClick={handleSubmit}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg min-w-[120px]  "
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg min-w-30  "
               disabled={submitting}
             >
               {submitting ? (

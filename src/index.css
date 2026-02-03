@@ -1,17 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
 
 @layer base {
   :root {
-    --primary: 15 23 42;
-    /* Slate 900 */
-    --accent: 37 99 235;
-    /* Blue 600 */
-    --background: 248 250 252;
-    /* Slate 50 */
-    --sidebar-bg: 15 23 42;
-    /* Slate 900 */
-    --sidebar-text: 241 245 249;
-    /* Slate 100 */
+    --primary: 15 23 42;        /* Slate 900 */
+    --accent: 37 99 235;        /* Blue 600 */
+    --background: 248 250 252;  /* Slate 50 */
+    --sidebar-bg: 15 23 42;     /* Slate 900 */
+    --sidebar-text: 241 245 249;/* Slate 100 */
     --navbar-bg: 255 255 255;
     --font-inter: 'Inter', sans-serif;
   }

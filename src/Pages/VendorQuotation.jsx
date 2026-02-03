@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import AssignedVendorsTab from "../components/vendorQuotation/VendorQuotationDetails";
 import RequisitionFlowTab from "../components/vendorQuotation/RequisitionFlow";
@@ -8,15 +8,12 @@ import QuotationComparison from "../components/vendorQuotation/QuotationComparis
 export default function VendorQuotation() {
   const [activeTab, setActiveTab] = useState("assigned");
   const [searchParams] = useSearchParams();
-  const [viewId, setViewId] = useState(null);
 
-  useEffect(() => {
-    const id = searchParams.get("view_id");
-    if (id) {
-      setViewId(id);
-      setActiveTab("list");
-    }
-  }, [searchParams]);
+  // SOURCE OF TRUTH (no state, no effect)
+  const viewId = searchParams.get("view_id");
+
+  // Derived tab (pure calculation)
+  const currentTab = viewId ? "list" : activeTab;
 
   const tabs = [
     { id: "assigned", label: "Quotation Submission" },
@@ -26,20 +23,7 @@ export default function VendorQuotation() {
   ];
 
   return (
-    <div className="">
-
-      {/* HEADER */}
-      {/* <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
-            Vendor Quotations
-          </h2>
-          <p className="text-slate-500 text-sm mt-1">
-            Manage vendor offers, compare rates, and select winning quotations.
-          </p>
-        </div>
-      </div> */}
-
+    <div>
       {/* TABS HEADER */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-6 px-1">
         <div className="flex overflow-x-auto scrollbar-hide">
@@ -48,16 +32,17 @@ export default function VendorQuotation() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                relative px-6 py-4 text-sm font-medium transition-all duration-200 whitespace-nowrap outline-none
-                ${activeTab === tab.id
-                  ? "text-blue-600"
-                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                relative px-6 py-4 text-sm font-medium transition-all duration-200 whitespace-nowrap
+                ${
+                  currentTab === tab.id
+                    ? "text-blue-600"
+                    : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
                 }
               `}
             >
-              <span className="relative z-10">{tab.label}</span>
-              {activeTab === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full mx-4" />
+              <span>{tab.label}</span>
+              {currentTab === tab.id && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 mx-4" />
               )}
             </button>
           ))}
@@ -66,21 +51,15 @@ export default function VendorQuotation() {
 
       {/* TAB CONTENT */}
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-        {activeTab === "assigned" && (
-          <AssignedVendorsTab />
-        )}
+        {currentTab === "assigned" && <AssignedVendorsTab />}
 
-        {activeTab === "list" && (
+        {currentTab === "list" && (
           <VendorQuotationList initialViewId={viewId} />
         )}
 
-        {activeTab === "flow" && (
-          <RequisitionFlowTab />
-        )}
+        {currentTab === "flow" && <RequisitionFlowTab />}
 
-        {activeTab === "comparison" && (
-          <QuotationComparison />
-        )}
+        {currentTab === "comparison" && <QuotationComparison />}
       </div>
     </div>
   );

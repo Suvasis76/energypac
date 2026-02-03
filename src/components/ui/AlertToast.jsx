@@ -20,7 +20,7 @@ export default function AlertToast({
   const isSuccess = type === "success";
 
   return (
-    <div className="fixed top-5 right-5 z-[70]">
+    <div className="fixed top-5 right-5 z-70">
       <div
         className={`flex items-center gap-3 px-5 py-3 rounded-xl shadow-lg text-sm font-semibold
           ${isSuccess ? "bg-green-600 text-white" : "bg-red-600 text-white"}

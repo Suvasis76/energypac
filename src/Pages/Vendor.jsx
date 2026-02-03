@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axiosSecure from "../api/axiosSecure";
 import { FaPlus, FaEdit, FaTrash, FaEye, FaFileExcel } from "react-icons/fa";
 
 import VendorModal from "../components/vendors/VendorModal";
@@ -303,7 +302,7 @@ export default function Vendors() {
                     <div className="flex flex-wrap gap-4 items-end">
 
                         {/* Search Vendor */}
-                        <div className="flex-1 min-w-[220px]">
+                        <div className="flex-1 min-w-55">
                             <label className="block text-xs font-semibold text-slate-600 mb-1">
                                 Search Vendor
                             </label>

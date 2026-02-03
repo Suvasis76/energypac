@@ -154,7 +154,7 @@ const DetailItem = ({ label, value, icon, fullWidth }) => (
         <span className="text-xs font-semibold text-slate-500 mb-1 flex items-center gap-1">
             {icon} {label}
         </span>
-        <span className="text-sm font-medium text-slate-800 break-words">
+        <span className="text-sm font-medium text-slate-800 wrap-break-words">
             {value || "-"}
         </span>
     </div>

@@ -56,7 +56,7 @@ const VendorAssignmentModal = ({ open, onClose, editData, onSuccess, viewOnly = 
 
         // Ensure form is initialized from props at start (in case fetch is slow or fails)
         // This acts as the "optimistic" state
-        setForm((prev) => {
+        setForm(() => {
           // If we already have fresh data (very fast), don't overwrite? 
           // actually this runs synchronously before the await above resolves in the same render cycle? 
           // No, await makes it async. So we set form here first.
@@ -155,7 +155,7 @@ const VendorAssignmentModal = ({ open, onClose, editData, onSuccess, viewOnly = 
 
   return (
     <div
-      className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300"
+      className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-100 p-4 animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
@@ -236,7 +236,7 @@ const VendorAssignmentModal = ({ open, onClose, editData, onSuccess, viewOnly = 
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-slate-700">Remarks</label>
                 <textarea
-                  className="input min-h-[80px]"
+                  className="input min-h-20"
                   placeholder="Any internal notes or remarks..."
                   value={form.remarks}
                   onChange={(e) =>
@@ -297,7 +297,7 @@ const VendorAssignmentModal = ({ open, onClose, editData, onSuccess, viewOnly = 
           {!viewOnly && (
             <button
               onClick={handleSubmit}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg min-w-[100px]"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg min-w-25"
               disabled={submitting || loadingData}
             >
               {submitting ? (

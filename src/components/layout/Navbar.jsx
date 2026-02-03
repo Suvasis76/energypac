@@ -55,7 +55,7 @@ export default function Navbar({ toggleSidebar, isSidebarOpen }) {
 
       {/* RIGHT SECTION */}
       <div className="flex items-center gap-6">
-        <div className="h-8 w-[1px] bg-slate-200 hidden sm:block"></div>
+        <div className="h-8 w-px bg-slate-200 hidden sm:block"></div>
 
         <button
           onClick={logout}

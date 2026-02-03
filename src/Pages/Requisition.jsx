@@ -414,7 +414,7 @@ const Requisition = () => {
         <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
           <div className="flex flex-wrap gap-4 items-end">
             {/* Search */}
-            <div className="flex-1 min-w-[220px]">
+            <div className="flex-1 min-w-55">
               <label className="block text-xs font-semibold text-slate-600 mb-1">
                 Search Requisition
               </label>

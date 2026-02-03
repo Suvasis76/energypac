@@ -70,18 +70,15 @@ const ProductSelector = ({ value, onChange, placeholder = "Search product...", d
                     // For now, we assume the initial list (often page 1) or a full list is returned if no page param.
                     // If your backend supports /api/products/ID, we should use that instead.
 
-                    setProducts(prev => {
-                        // Merge to avoid losing currently searched items if any, though usually this runs on mount
-                        // Actually, just setting it is safer to ensure we have the data.
-                        return allProducts;
-                    });
+                    setProducts(allProducts);
+
                 } catch (err) {
                     console.error("Failed to load initial products", err);
                 }
             }
         };
         fetchInitial();
-    }, [value, defaultItem]);
+    }, [value, defaultItem, products]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -107,7 +104,7 @@ const ProductSelector = ({ value, onChange, placeholder = "Search product...", d
     // Dropdown Content
     const dropdownContent = (
         <div
-            className="product-selector-portal fixed z-[9999] bg-white border border-slate-200 rounded-lg shadow-xl max-h-60 overflow-y-auto"
+            className="product-selector-portal fixed z-9999 bg-white border border-slate-200 rounded-lg shadow-xl max-h-60 overflow-y-auto"
             style={{
                 top: coords.top + 4,
                 left: coords.left,

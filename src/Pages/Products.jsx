@@ -300,7 +300,7 @@ export default function Products() {
                     <div className="flex flex-wrap gap-4">
 
                         {/* Search by Product Name */}
-                        <div className="flex-1 min-w-[220px]">
+                        <div className="flex-1 min-w-55">
                             <label className="block text-xs font-semibold text-slate-600 mb-1">
                                 Search Product
                             </label>
@@ -346,8 +346,8 @@ export default function Products() {
                         <thead>
                             <tr className="bg-blue-50/50 text-slate-800 uppercase text-[10px] font-bold tracking-widest">
                                 <th className="px-6 py-4 text-[12px] whitespace-nowrap">Item Code</th>
-                                <th className="px-6 py-4 text-[12px] min-w-[200px]">Item Name</th>
-                                <th className="px-6 py-4 text-[12px] min-w-[200px]">Description</th>
+                                <th className="px-6 py-4 text-[12px] min-w-50">Item Name</th>
+                                <th className="px-6 py-4 text-[12px] min-w-50">Description</th>
                                 <th className="px-6 py-4 text-[12px] whitespace-nowrap">HSN</th>
                                 <th className="px-6 py-4 text-[12px] whitespace-nowrap">Unit</th>
                                 <th className="px-6 py-4 text-[12px] text-right whitespace-nowrap">Stock</th>

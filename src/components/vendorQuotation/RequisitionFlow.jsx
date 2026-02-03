@@ -144,7 +144,7 @@ const RequisitionFlow = ({ requisitionId: propRequisitionId }) => {
                                                     <div className="text-slate-600 text-sm">
                                                         {vendor.phone}
                                                     </div>
-                                                    <div className="text-slate-600 text-sm truncate max-w-[150px]" title={vendor.email}>
+                                                    <div className="text-slate-600 text-sm truncate max-w-37.5" title={vendor.email}>
                                                         {vendor.email}
                                                     </div>
                                                 </td>
@@ -162,7 +162,7 @@ const RequisitionFlow = ({ requisitionId: propRequisitionId }) => {
                                                                 {assigned_items.map((item, i) => (
                                                                     <div key={i} className="flex justify-between items-center px-3 py-2">
                                                                         <div>
-                                                                            <div className="font-medium text-slate-800 text-sm truncate max-w-[140px]" title={item.product?.item_name}>
+                                                                            <div className="font-medium text-slate-800 text-sm truncate max-w-35" title={item.product?.item_name}>
                                                                                 {item.product?.item_name || "Unknown"}
                                                                             </div>
                                                                             <div className="text-xs text-slate-600 font-mono">
@@ -227,7 +227,7 @@ const RequisitionFlow = ({ requisitionId: propRequisitionId }) => {
                                                                                     {q.items && q.items.map((qItem, qi) => (
                                                                                         <tr key={qi}>
                                                                                             <td className="py-1 px-2 align-top">
-                                                                                                <div className="text-slate-800 font-medium truncate max-w-[120px]" title={qItem.product_name}>
+                                                                                                <div className="text-slate-800 font-medium truncate max-w-30" title={qItem.product_name}>
                                                                                                     {qItem.product_name}
                                                                                                 </div>
                                                                                                 <div className="text-slate-500 font-mono text-xs">{qItem.product_code}</div>

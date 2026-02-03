@@ -34,7 +34,7 @@ const VendorQuotationViewModal = ({ open, onClose, quotationId }) => {
 
     return (
         <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300"
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-100 p-4 animate-in fade-in duration-300"
             onClick={onClose}
         >
             <div

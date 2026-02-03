@@ -1,30 +1,26 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import axiosSecure from "../api/axiosSecure";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
-  const [user, setUser] = useState(null);
+  // ✅ derive initial auth state synchronously
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return Boolean(localStorage.getItem("access_token"));
+  });
 
-  /* =========================
-     INITIAL AUTH CHECK
-     ========================= */
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
+  const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
-
-    setIsAuthenticated(!!token);
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Failed to parse user data", e);
-      }
+    if (!storedUser) return null;
+    try {
+      return JSON.parse(storedUser);
+    } catch {
+      return null;
     }
-    setAuthChecked(true);
-  }, []);
+  });
+
+  // auth check is complete immediately
+  const [authChecked] = useState(true);
 
   /* =========================
      LOGIN
@@ -39,11 +35,9 @@ export const AuthProvider = ({ children }) => {
       const userData = res.data.user;
 
       localStorage.setItem("access_token", res.data.access);
-
-      // Store refresh token in cookie (1 day expiry)
-      document.cookie = `refresh_token=${res.data.refresh}; path=/; max-age=86400; SameSite=Lax`;
-
       localStorage.setItem("user", JSON.stringify(userData));
+
+      document.cookie = `refresh_token=${res.data.refresh}; path=/; max-age=86400; SameSite=Lax`;
 
       setUser(userData);
       setIsAuthenticated(true);
@@ -59,7 +53,6 @@ export const AuthProvider = ({ children }) => {
      ========================= */
   const logout = () => {
     localStorage.clear();
-    // Clear refresh token cookie
     document.cookie = "refresh_token=; path=/; max-age=0";
     setIsAuthenticated(false);
     setUser(null);
@@ -80,4 +73,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// ⚠️ Fast Refresh warning may still appear (safe but optional fix below)
 export const useAuth = () => useContext(AuthContext);

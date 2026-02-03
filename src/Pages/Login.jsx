@@ -54,7 +54,7 @@ export default function Login() {
                 </div>
 
                 {/* LOGIN CARD */}
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-8 rounded-[32px] shadow-2xl">
+                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-8 rounded-4xl shadow-2xl">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-4">
                             <div className="relative group">

@@ -11,7 +11,7 @@ import { saveAs } from "file-saver";
 const PurchaseOrderList = () => {
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
 
     // Pagination State
     const [count, setCount] = useState(0);

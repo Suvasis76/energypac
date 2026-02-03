@@ -71,7 +71,7 @@ const RequisitionSelector = ({
 
   const dropdown = (
     <div
-      className="requisition-selector-portal fixed z-[9999] bg-white border border-slate-200 rounded-lg shadow-xl max-h-60 overflow-y-auto"
+      className="requisition-selector-portal fixed z-9999 bg-white border border-slate-200 rounded-lg shadow-xl max-h-60 overflow-y-auto"
       style={{
         top: coords.top + 4,
         left: coords.left,

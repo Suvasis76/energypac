@@ -38,6 +38,14 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
+// Helper to get cookie
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
+
 /* =========================
    RESPONSE INTERCEPTOR
    ========================= */
@@ -50,10 +58,12 @@ axiosSecure.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const refreshToken = localStorage.getItem("refresh_token");
+      // Get refresh token from cookie
+      const refreshToken = getCookie("refresh_token");
 
       if (!refreshToken) {
         localStorage.clear();
+        document.cookie = "refresh_token=; path=/; max-age=0";
         window.location.href = "/login";
         return Promise.reject(error);
       }
@@ -75,7 +85,7 @@ axiosSecure.interceptors.response.use(
 
       try {
         const res = await axios.post(
-          "http://192.168.0.212:8000/api/auth/refresh",
+          `${import.meta.env.VITE_API_BASE_URL}/api/auth/refresh`,
           { refresh: refreshToken }
         );
 
@@ -83,7 +93,8 @@ axiosSecure.interceptors.response.use(
 
         // store new tokens
         localStorage.setItem("access_token", access);
-        localStorage.setItem("refresh_token", refresh);
+        // localStorage.setItem("refresh_token", refresh); // No longer in local storage
+        document.cookie = `refresh_token=${refresh}; path=/; max-age=86400; SameSite=Lax`;
 
         // update default header
         axiosSecure.defaults.headers.Authorization = `Bearer ${access}`;
@@ -96,12 +107,14 @@ axiosSecure.interceptors.response.use(
       } catch (err) {
         processQueue(err, null);
         localStorage.clear();
+        document.cookie = "refresh_token=; path=/; max-age=0";
         window.location.href = "/login";
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
       }
     }
+
 
     return Promise.reject(error);
   }

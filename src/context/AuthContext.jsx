@@ -39,7 +39,10 @@ export const AuthProvider = ({ children }) => {
       const userData = res.data.user;
 
       localStorage.setItem("access_token", res.data.access);
-      localStorage.setItem("refresh_token", res.data.refresh);
+
+      // Store refresh token in cookie (1 day expiry)
+      document.cookie = `refresh_token=${res.data.refresh}; path=/; max-age=86400; SameSite=Lax`;
+
       localStorage.setItem("user", JSON.stringify(userData));
 
       setUser(userData);
@@ -56,6 +59,8 @@ export const AuthProvider = ({ children }) => {
      ========================= */
   const logout = () => {
     localStorage.clear();
+    // Clear refresh token cookie
+    document.cookie = "refresh_token=; path=/; max-age=0";
     setIsAuthenticated(false);
     setUser(null);
   };

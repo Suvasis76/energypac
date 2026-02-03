@@ -19,14 +19,15 @@ const normalizeLink = (link) => {
     newLink = link.replace("/quotations", "/vendor-quotation");
   }
 
-  // If it contains an ID (UUID) AND not a query param, redirect to list root
-  // Because we don't have detailed routes for /purchase-order/:id etc.
-  // Example: /purchase-order/a5e0... -> /purchase-order
-  const hasId = /\/[a-f0-9-]{36}/.test(newLink);
-  if (hasId) {
-    // Remove the ID part, effectively going to the list
-    // But keep query params if any (though ID and query params together is rare here)
-    newLink = newLink.split('/').slice(0, 2).join('/');
+  // Check for ID (UUID)
+  const idMatch = newLink.match(/\/([a-f0-9-]{36})/);
+  if (idMatch) {
+    const id = idMatch[1];
+    // Strip ID from path and add as query param
+    // basic assumption: path is /resource/uuid -> /resource?view_id=uuid
+    // We split by the ID to get the base path.
+    const parts = newLink.split('/' + id);
+    newLink = `${parts[0]}?view_id=${id}`;
   }
 
   return newLink;
@@ -37,6 +38,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Modal State
 
 
   useEffect(() => {
@@ -54,6 +56,8 @@ export default function Dashboard() {
     fetchStats();
   }, []);
 
+
+
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -64,7 +68,6 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      {/* HEADER */}
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -153,7 +156,10 @@ export default function Dashboard() {
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {stats.recent_activities?.slice(0, 10).map((activity, index) => (
-                      <TableRow key={index} activity={activity} />
+                      <TableRow
+                        key={index}
+                        activity={activity}
+                      />
                     ))}
                     {(!stats.recent_activities || stats.recent_activities.length === 0) && (
                       <tr><td colSpan="4" className="p-6 text-center text-slate-400">No recent activity</td></tr>
@@ -213,6 +219,10 @@ export default function Dashboard() {
           </div>
         </>
       )}
+
+      {/* MODALS */}
+
+
     </div>
   );
 }

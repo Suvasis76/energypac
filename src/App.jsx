@@ -11,6 +11,7 @@ import Vendor from "./pages/Vendor";
 import VendorAssignment from "./pages/VendorAssignment";
 import VendorQuotations from "./pages/VendorQuotation";
 import PurchaseOrderList from "./pages/PurchaseOrderList";
+import Pending from "./pages/pending";
 
 export default function App() {
   return (
@@ -24,11 +25,14 @@ export default function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/master/item" element={<Products />} />
               <Route path="/master/vendor" element={<Vendor />} />
-              <Route path="/sales" element={<Dashboard />} />
+              <Route path="/sales" element={<Pending />} />
               <Route path="/requisition" element={<Requisition />} />
               <Route path="/vendor-assignment" element={<VendorAssignment />} />
               <Route path="/vendor-quotation" element={<VendorQuotations />} />
               <Route path="/purchase-order" element={<PurchaseOrderList />} />
+              {/* <Route path="/export-data" element={<Pending />} />
+              <Route path="/export-log" element={<Pending />} /> */}
+              <Route path="/HSN" element={<Pending />} />
             </Route>
           </Route>
         </Routes>

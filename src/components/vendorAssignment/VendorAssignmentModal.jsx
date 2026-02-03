@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   createVendorAssignment,
   updateVendorAssignment,
-  getVendorAssignmentsByRequisition,
+  getVendorAssignment,
 } from "../../services/vendorAssignment";
 import { getRequisitionItems } from "../../services/requisition";
 import VendorSelector from "../common/VendorSelector";
@@ -26,50 +26,48 @@ const VendorAssignmentModal = ({ open, onClose, editData, onSuccess, viewOnly = 
       setError("");
 
       if (editData) {
-        // Init display data from props first
+        // Init display data from props first to show something immediately
         setDisplayData(editData);
 
-        // If viewOnly, fetch fresh data using requisition ID as requested
-        if (viewOnly && editData.requisition) {
+        // Always try to fetch fresh data if we have an ID
+        if (editData.id) {
           setLoadingData(true);
           try {
-            const res = await getVendorAssignmentsByRequisition(editData.requisition);
-            // The API likely returns a list of assignments for this requisition
-            // We should pick the relevant one. For now, assume the first one 
-            // or the one matching the current ID if available.
-            const results = res.data.results || res.data || [];
-            const freshData = results.length > 0 ? results[0] : editData;
+            const { data } = await getVendorAssignment(editData.id);
 
-            // Update form AND display data with fresh details
-            setDisplayData(freshData);
+            // Update display data for selectors
+            setDisplayData(data);
+
+            // Update form with fresh data
             setForm({
-              requisition: freshData.requisition,
-              vendor: freshData.vendor,
-              remarks: freshData.remarks || "",
-              items: freshData.items || [],
+              requisition: data.requisition,
+              vendor: data.vendor,
+              remarks: data.remarks || "",
+              items: data.items || [],
             });
           } catch (err) {
             console.error("Failed to fetch assignment details", err);
-            // Fallback to props
-            setForm({
-              requisition: editData.requisition,
-              vendor: editData.vendor,
-              remarks: editData.remarks || "",
-              items: editData.items || [],
-            });
+            // Fallback is already set via initial prop read if we want, 
+            // but let's ensure form is set from props if it wasn't already (though we do it below)
           } finally {
             setLoadingData(false);
           }
-        } else {
-          // Standard edit mode - use props directly
-          setDisplayData(editData);
-          setForm({
+        }
+
+        // Ensure form is initialized from props at start (in case fetch is slow or fails)
+        // This acts as the "optimistic" state
+        setForm((prev) => {
+          // If we already have fresh data (very fast), don't overwrite? 
+          // actually this runs synchronously before the await above resolves in the same render cycle? 
+          // No, await makes it async. So we set form here first.
+          return {
             requisition: editData.requisition,
             vendor: editData.vendor,
             remarks: editData.remarks || "",
             items: editData.items || [],
-          });
-        }
+          };
+        });
+
       } else {
         setDisplayData(null);
         setForm({
@@ -84,7 +82,7 @@ const VendorAssignmentModal = ({ open, onClose, editData, onSuccess, viewOnly = 
     if (open) {
       initData();
     }
-  }, [editData, open, viewOnly]);
+  }, [editData, open]);
 
   if (!open) return null;
 
@@ -291,7 +289,7 @@ const VendorAssignmentModal = ({ open, onClose, editData, onSuccess, viewOnly = 
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
           <button
             type="button"
-            className="btn-secondary"
+            className="bg-white hover:bg-slate-100 text-slate-700 font-bold py-2 px-4 rounded-lg border border-slate-300"
             onClick={onClose}
           >
             {viewOnly ? "Close" : "Cancel"}
@@ -299,7 +297,7 @@ const VendorAssignmentModal = ({ open, onClose, editData, onSuccess, viewOnly = 
           {!viewOnly && (
             <button
               onClick={handleSubmit}
-              className="btn-primary min-w-[100px]"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg min-w-[100px]"
               disabled={submitting || loadingData}
             >
               {submitting ? (

@@ -21,3 +21,8 @@ export const getPurchaseOrderReport = (params) => {
     // params can be { start_date, end_date } OR { status } OR { vendor }
     return axiosSecure.get(`/api/reports/purchase-orders`, { params });
 };
+
+export const getPurchaseOrder = async (id) => {
+    const res = await axiosSecure.get(`/api/purchase-orders/${id}`);
+    return res.data;
+};

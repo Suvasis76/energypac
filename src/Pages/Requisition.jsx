@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   fetchRequisitions,
   deleteRequisition,
@@ -15,6 +16,7 @@ import { saveAs } from "file-saver";
 const Requisition = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
 
   // Pagination State
   const [count, setCount] = useState(0);
@@ -97,6 +99,16 @@ const Requisition = () => {
     loadData();
   }, []);
 
+  // Check for view_id param
+  useEffect(() => {
+    const viewId = searchParams.get("view_id");
+    if (viewId && viewId.length === 36) {
+      setEditData({ id: viewId });
+      setViewOnly(true);
+      setOpenModal(true);
+    }
+  }, [searchParams]);
+
   const handleEdit = (row) => {
     setEditData(row);
     setViewOnly(false);
@@ -134,7 +146,8 @@ const Requisition = () => {
       setToast({
         open: true,
         type: "error",
-        message: "Failed to delete requisition",
+        message: "Failed to delete requisition" + err.message,
+    
       });
     } finally {
       setDeleting(false);
@@ -185,7 +198,7 @@ const Requisition = () => {
         }
         const selectedReq = allRequisitions.find(r => r.id === selectedReqId);
         const reqNo = selectedReq ? selectedReq.requisition_number : "Detail";
-        filenamePrefix = `Requisition_Report_${reqNo.replace(/[\/\\s]+/g, '_')}`;
+        filenamePrefix = `Requisition_Report_${reqNo.replace(/[\\s]+/g, '_')}`;
 
         const res = await getRequisitionDetailReport(selectedReqId);
         // Standardize data: API might return object or array depending on backend serialization
@@ -631,7 +644,7 @@ const Requisition = () => {
                         type="date"
                         value={reportDates.end}
                         onChange={(e) => setReportDates({ ...reportDates, end: e.target.value })}
-                        className="input w-full text-xs"
+                        className="input w-full text-xs"   
                       />
                     </div>
                   </div>

@@ -24,7 +24,7 @@ export default function Products() {
     const [unitFilter, setUnitFilter] = useState("");
 
 
-    const [error, setError] = useState("");
+    const [ setError] = useState("");
 
     const [showConfirm, setShowConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -456,13 +456,17 @@ export default function Products() {
                 </div>
             </div>
             <ProductModal
-                key={editProduct ? editProduct.id : "add"}
-                open={openModal}
-                onClose={() => setOpenModal(false)}
-                onSuccess={handleProductSuccess}
-                mode={editProduct ? "edit" : "add"}
-                product={editProduct}
-            />
+    key={editProduct ? editProduct.id : "add"}
+    open={openModal}
+    onClose={() => {
+        setOpenModal(false);
+        setEditProduct(null);   // 🔥 THIS LINE FIXES IT
+    }}
+    onSuccess={handleProductSuccess}
+    mode={editProduct ? "edit" : "add"}
+    product={editProduct}
+/>
+
 
             <ProductViewModal
                 open={viewModalOpen}

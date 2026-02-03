@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { FaTimes, FaFileInvoice, FaBuilding, FaBoxOpen } from "react-icons/fa";
-import { markItemPurchased } from "../../services/purchaseOrderService";
+import { markItemPurchased, getPurchaseOrder } from "../../services/purchaseOrderService";
 import AlertToast from "../ui/AlertToast";
 import ConfirmDialog from "../ui/ConfirmDialog";
 
@@ -27,11 +27,33 @@ const PurchaseOrderModal = ({ open, onClose, data }) => {
     const [toast, setToast] = useState({ open: false, type: "success", message: "" });
     const [showConfirm, setShowConfirm] = useState(false);
 
+    // ... imports
+
+    const [poData, setPoData] = useState(null);
+
     useEffect(() => {
-        if (data && data.items) {
-            setItems(data.items);
+        const fetchData = async () => {
+            if (data && data.id) {
+                try {
+                    const fullData = await getPurchaseOrder(data.id);
+                    setPoData(fullData);
+                    setItems(fullData.items || []);
+                } catch (error) {
+                    console.error("Failed to fetch PO details", error);
+                    // Fallback
+                    setPoData(data);
+                    setItems(data.items || []);
+                }
+            } else if (data) {
+                setPoData(data);
+                setItems(data.items || []);
+            }
+        };
+
+        if (open) {
+            fetchData();
         }
-    }, [data]);
+    }, [data, open]);
 
     // Close on click outside
     const handleBackdropClick = (e) => {
@@ -114,7 +136,7 @@ const PurchaseOrderModal = ({ open, onClose, data }) => {
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-slate-800">Purchase Order Details</h3>
-                            <p className="text-sm text-slate-500 font-mono">{data.po_number}</p>
+                            <p className="text-sm text-slate-500 font-mono">{poData?.po_number || data?.po_number}</p>
                         </div>
                     </div>
                     <button
@@ -128,108 +150,114 @@ const PurchaseOrderModal = ({ open, onClose, data }) => {
                 {/* SCROLLABLE CONTENT */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
-                    {/* INFO GRID */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                            <div className="flex items-center gap-2 mb-2">
-                                <FaBuilding className="text-slate-400" />
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Vendor</span>
-                            </div>
-                            <div className="font-semibold text-slate-800">{data.vendor_name}</div>
-                            {/* <div className="text-sm text-slate-500 font-mono mt-1">{data.vendor}</div> */}
-                        </div>
+                    {(!poData) ? (
+                        <div className="text-center py-12 text-slate-500 animate-pulse">Loading details...</div>
+                    ) : (
+                        <>
+                            {/* INFO GRID */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <FaBuilding className="text-slate-400" />
+                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Vendor</span>
+                                    </div>
+                                    <div className="font-semibold text-slate-800">{poData.vendor_name}</div>
+                                </div>
 
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                            <div className="flex items-center gap-2 mb-2">
-                                <FaBoxOpen className="text-slate-400" />
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Requisition</span>
-                            </div>
-                            <div className="font-semibold text-slate-800">{data.requisition_number}</div>
-                        </div>
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <FaBoxOpen className="text-slate-400" />
+                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Requisition</span>
+                                    </div>
+                                    <div className="font-semibold text-slate-800">{poData.requisition_number}</div>
+                                </div>
 
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status</span>
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status</span>
+                                    </div>
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                ${poData.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                                            poData.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                                                'bg-slate-100 text-slate-800'}`}>
+                                        {poData.status}
+                                    </span>
+                                    <div className="text-sm text-slate-500 mt-2">
+                                        Created: {new Date(poData.created_at).toLocaleDateString()}
+                                    </div>
+                                </div>
                             </div>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                ${data.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                                    data.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
-                                        'bg-slate-100 text-slate-800'}`}>
-                                {data.status}
-                            </span>
-                            <div className="text-sm text-slate-500 mt-2">
-                                Created: {new Date(data.created_at).toLocaleDateString()}
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* ITEMS TABLE */}
-                    <div>
-                        <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">Order Items ({data.items?.length || 0})</h4>
-                        <div className="border border-slate-200 rounded-lg overflow-hidden">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
-                                    <tr>
-                                        <th className="px-4 py-3">Product</th>
-                                        <th className="px-4 py-3 text-right">HSN</th>
-                                        <th className="px-4 py-3 text-right">Quantity</th>
-                                        <th className="px-4 py-3 text-right">Rate</th>
-                                        <th className="px-4 py-3 text-right">Amount</th>
-                                        <th className="px-4 py-3 text-right">Purchase</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {items.map((item) => (
-                                        <tr key={item.id} className="hover:bg-slate-50/50">
-                                            <td className="px-4 py-3">
-                                                <div className="font-medium text-slate-800">{item.product_name}</div>
-                                                <div className="text-xs text-slate-500 font-mono">{item.product_code}</div>
-                                            </td>
-                                            <td className="px-4 py-3 text-right">
-                                                {item.hsn_code}
-                                            </td>
-                                            <td className="px-4 py-3 text-right">
-                                                {item.quantity} <span className="text-xs text-slate-400">{item.unit}</span>
-                                            </td>
-                                            <td className="px-4 py-3 text-right font-mono">
-                                                ₹ {parseFloat(item.rate).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                            </td>
-                                            <td className="px-4 py-3 text-right font-bold text-slate-800 font-mono">
-                                                ₹ {parseFloat(item.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                            </td>
-                                            <td className="px-4 py-3 text-right">
-                                                <input
-                                                    type="checkbox"
-                                                    disabled={item.is_received || processing}
-                                                    checked={item.is_received || selectedIds.has(item.id)}
-                                                    onChange={() => !item.is_received && handleCheckboxChange(item.id)}
-                                                    className={`w-4 h-4 rounded focus:ring-blue-500 cursor-pointer 
+                            {/* ITEMS TABLE */}
+                            <div>
+                                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">Order Items ({poData.items?.length || 0})</h4>
+                                <div className="border border-slate-200 rounded-lg overflow-hidden">
+                                    <table className="w-full text-left text-sm">
+                                        <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                            <tr>
+                                                <th className="px-4 py-3">Product</th>
+                                                <th className="px-4 py-3 text-right">HSN</th>
+                                                <th className="px-4 py-3 text-right">Quantity</th>
+                                                <th className="px-4 py-3 text-right">Rate</th>
+                                                <th className="px-4 py-3 text-right">Amount</th>
+                                                <th className="px-4 py-3 text-right">Purchase</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {items.map((item) => (
+                                                <tr key={item.id} className="hover:bg-slate-50/50">
+                                                    <td className="px-4 py-3">
+                                                        <div className="font-medium text-slate-800">{item.product_name}</div>
+                                                        <div className="text-xs text-slate-500 font-mono">{item.product_code}</div>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right">
+                                                        {item.hsn_code}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right">
+                                                        {item.quantity} <span className="text-xs text-slate-400">{item.unit}</span>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right font-mono">
+                                                        ₹ {parseFloat(item.rate).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right font-bold text-slate-800 font-mono">
+                                                        ₹ {parseFloat(item.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right">
+                                                        <input
+                                                            type="checkbox"
+                                                            disabled={item.is_received || processing}
+                                                            checked={item.is_received || selectedIds.has(item.id)}
+                                                            onChange={() => !item.is_received && handleCheckboxChange(item.id)}
+                                                            className={`w-4 h-4 rounded focus:ring-blue-500 cursor-pointer 
                                                         ${item.is_received
-                                                            ? "text-green-600 bg-green-100 border-green-300 cursor-not-allowed"
-                                                            : "text-blue-600 bg-gray-100 border-gray-300"}`}
-                                                />
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {(!data.items || data.items.length === 0) && (
-                                        <tr>
-                                            <td colSpan="4" className="px-4 py-8 text-center text-slate-400">
-                                                No items in this order.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                                <tfoot className="bg-slate-50 border-t border-slate-200 font-bold text-slate-800">
-                                    <tr>
-                                        <td colSpan="3" className="px-4 py-3 text-right">Total Amount:</td>
-                                        <td className="px-4 py-3 text-right text-lg text-blue-600">
-                                            {parseFloat(data.total_amount).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
+                                                                    ? "text-green-600 bg-green-100 border-green-300 cursor-not-allowed"
+                                                                    : "text-blue-600 bg-gray-100 border-gray-300"}`}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {(!poData.items || poData.items.length === 0) && (
+                                                <tr>
+                                                    <td colSpan="6" className="px-4 py-8 text-center text-slate-400">
+                                                        No items in this order.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                        <tfoot className="bg-slate-50 border-t border-slate-200 font-bold text-slate-800">
+                                            <tr>
+                                                <td colSpan="4" className="px-4 py-3 text-right">Total Amount:</td>
+                                                <td className="px-4 py-3 text-right text-lg text-blue-600">
+                                                    {parseFloat(poData.total_amount).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* FOOTER */}

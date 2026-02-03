@@ -13,7 +13,7 @@ const QuotationComparison = () => {
     const [selectedRequisition, setSelectedRequisition] = useState("");
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [ setError] = useState(null);
 
     // State for Toast and Confirm
     const [toast, setToast] = useState({ open: false, type: "success", message: "" });
@@ -50,10 +50,19 @@ const QuotationComparison = () => {
     }, [selectedRequisition]);
 
     const handleItemSelect = (productCode, itemId) => {
-        setSelectedItems(prev => ({
-            ...prev,
-            [productCode]: itemId
-        }));
+        setSelectedItems(prev => {
+            // Toggle Logic: If already selected, deselect it.
+            if (prev[productCode] === itemId) {
+                const newState = { ...prev };
+                delete newState[productCode];
+                return newState;
+            }
+            // Otherwise select this one (replaces any other selection for this product)
+            return {
+                ...prev,
+                [productCode]: itemId
+            };
+        });
     };
 
     const handleGenerateClick = () => {
@@ -361,9 +370,9 @@ const QuotationComparison = () => {
                                                                         Select
                                                                     </div>
                                                                     <input
-                                                                        type="radio"
+                                                                        type="checkbox"
                                                                         name={`product-${product.code}`}
-                                                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                                                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                                                         checked={selectedItems[product.code] === matchedItem.id}
                                                                         onChange={() => handleItemSelect(product.code, matchedItem.id)}
                                                                     />
@@ -390,6 +399,7 @@ const QuotationComparison = () => {
                             </tbody>
                         </table>
                     </div>
+
 
                     {/* GENERATE PO FOOTER */}
                     <div className="bg-slate-50 border-t border-slate-300 p-4 flex flex-col md:flex-row justify-end items-center gap-4">

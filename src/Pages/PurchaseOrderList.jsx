@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { fetchPurchaseOrders, getPurchaseOrderReport } from "../services/purchaseOrderService";
 import { FaEye, FaFileExcel } from "react-icons/fa";
 import AlertToast from "../components/ui/AlertToast";
@@ -10,6 +11,7 @@ import { saveAs } from "file-saver";
 const PurchaseOrderList = () => {
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // Pagination State
     const [count, setCount] = useState(0);
@@ -81,6 +83,19 @@ const PurchaseOrderList = () => {
     useEffect(() => {
         loadData();
     }, []);
+
+    // Check for view_id query param
+    useEffect(() => {
+        const viewId = searchParams.get("view_id");
+        if (viewId && viewId.length === 36) { // basic UUID check
+            setSelectedPO({ id: viewId });
+            setModalOpen(true);
+
+            // Optional: clear param so refresh doesn't reopen? 
+            // setSearchParams({}, { replace: true });
+            // Keeping it might be useful for sharing links.
+        }
+    }, [searchParams]);
 
     /* =========================
        REPORT HANDLER

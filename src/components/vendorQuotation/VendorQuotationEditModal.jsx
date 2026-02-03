@@ -232,7 +232,7 @@ const VendorQuotationEditModal = ({ open, onClose, quotationId, onSuccess }) => 
                 <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="btn-secondary"
+                        className="bg-white hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg border border-slate-300 flex items-center gap-2"
                         disabled={submitting}
                     >
                         Cancel
@@ -240,7 +240,7 @@ const VendorQuotationEditModal = ({ open, onClose, quotationId, onSuccess }) => 
                     <button
                         onClick={handleSubmit}
                         disabled={submitting || !data}
-                        className="btn-primary"
+                        className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg flex items-center gap-2"
                     >
                         {submitting ? "Updating..." : "Update Quotation"}
                     </button>

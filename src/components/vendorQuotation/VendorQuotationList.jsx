@@ -4,7 +4,7 @@ import { FaEye, FaSearch, FaFileInvoiceDollar, FaEdit } from "react-icons/fa";
 import VendorQuotationViewModal from "./VendorQuotationViewModal";
 import VendorQuotationEditModal from "./VendorQuotationEditModal";
 
-const VendorQuotationList = () => {
+const VendorQuotationList = ({ initialViewId }) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(0);
@@ -38,6 +38,12 @@ const VendorQuotationList = () => {
     useEffect(() => {
         loadData();
     }, []);
+
+    useEffect(() => {
+        if (initialViewId) {
+            handleView(initialViewId);
+        }
+    }, [initialViewId]);
 
     const handleView = (id) => {
         setViewId(id);

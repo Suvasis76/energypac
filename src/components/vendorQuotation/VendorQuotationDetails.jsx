@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { z } from "zod";
-import { getVendorQuotationsList, getQuotationItems, createQuotation } from "../../services/vendorQuotationService";
+import { getQuotationItems, createQuotation } from "../../services/vendorQuotationService";
 import RequisitionSelector from "../common/RequisitionSelector";
 import VendorSelector from "../common/VendorSelector";
-import { FaFileInvoiceDollar, FaUserTie, FaBoxOpen, FaClipboardList, FaCheckCircle, FaSearch, FaSave } from "react-icons/fa";
+import { FaFileInvoiceDolla, FaUserTie, FaBoxOpen, FaClipboardList, FaCheckCircle, FaSearch, FaSave } from "react-icons/fa";
 
 
 const VendorQuotationDetails = () => {

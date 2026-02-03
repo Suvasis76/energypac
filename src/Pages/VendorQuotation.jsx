@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import AssignedVendorsTab from "../components/vendorQuotation/VendorQuotationDetails";
 import RequisitionFlowTab from "../components/vendorQuotation/RequisitionFlow";
 import VendorQuotationList from "../components/vendorQuotation/VendorQuotationList";
@@ -6,6 +7,16 @@ import QuotationComparison from "../components/vendorQuotation/QuotationComparis
 
 export default function VendorQuotation() {
   const [activeTab, setActiveTab] = useState("assigned");
+  const [searchParams] = useSearchParams();
+  const [viewId, setViewId] = useState(null);
+
+  useEffect(() => {
+    const id = searchParams.get("view_id");
+    if (id) {
+      setViewId(id);
+      setActiveTab("list");
+    }
+  }, [searchParams]);
 
   const tabs = [
     { id: "assigned", label: "Quotation Submission" },
@@ -60,7 +71,7 @@ export default function VendorQuotation() {
         )}
 
         {activeTab === "list" && (
-          <VendorQuotationList />
+          <VendorQuotationList initialViewId={viewId} />
         )}
 
         {activeTab === "flow" && (

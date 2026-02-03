@@ -28,31 +28,34 @@ export default function ProductModal({
        PREFILL FORM (EDIT MODE)
        ========================= */
     useEffect(() => {
-        if (mode === "edit" && product) {
-            setForm({
-                item_code: product.item_code || "",
-                item_name: product.item_name || "",
-                description: product.description || "",
-                hsn_code: product.hsn_code || "",
-                unit: product.unit || "",
-                current_stock: product.current_stock ?? "",
-                reorder_level: product.reorder_level ?? "",
-                rate: product.rate ?? "",
-            });
-        } else {
-            // ADD MODE
-            setForm({
-                item_code: "",
-                item_name: "",
-                description: "",
-                hsn_code: "",
-                unit: "",
-                current_stock: "",
-                reorder_level: "",
-                rate: "",
-            });
-        }
-    }, [mode, product]);
+    if (!open) return;
+
+    if (mode === "edit" && product) {
+        setForm({
+            item_code: product.item_code || "",
+            item_name: product.item_name || "",
+            description: product.description || "",
+            hsn_code: product.hsn_code || "",
+            unit: product.unit || "PCS",
+            current_stock: product.current_stock ?? "",
+            reorder_level: product.reorder_level ?? "",
+            rate: product.rate ?? "",
+        });
+    } else {
+        // ADD MODE → CLEAR FORM
+        setForm({
+            item_code: "",
+            item_name: "",
+            description: "",
+            hsn_code: "",
+            unit: "PCS",
+            current_stock: "",
+            reorder_level: "",
+            rate: "",
+        });
+    }
+}, [open, mode, product]);
+
 
 
     if (!open) return null;
@@ -67,35 +70,35 @@ export default function ProductModal({
        SUBMIT (ADD / EDIT)
        ========================= */
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+        e.preventDefault();
+        setError("");
 
-    try {
-        setLoading(true);
+        try {
+            setLoading(true);
 
-        const payload = {
-            ...form,
-            current_stock: Number(form.current_stock),
-            reorder_level: Number(form.reorder_level),
-            rate: Number(form.rate),
-        };
+            const payload = {
+                ...form,
+                current_stock: Number(form.current_stock),
+                reorder_level: Number(form.reorder_level),
+                rate: Number(form.rate),
+            };
 
-        if (mode === "edit") {
-            await updateProduct(product.id, payload);
-        } else {
-            await createProduct(payload);
+            if (mode === "edit") {
+                await updateProduct(product.id, payload);
+            } else {
+                await createProduct(payload);
+            }
+
+            onSuccess(mode);
+            onClose();
+
+        } catch (err) {
+            setError(err.response?.data?.detail || "Failed to save product");
+            onSuccess("error");
+        } finally {
+            setLoading(false);
         }
-
-        onSuccess(mode);
-        onClose();
-
-    } catch (err) {
-        setError(err.response?.data?.detail || "Failed to save product");
-        onSuccess("error");
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
 
     return (
@@ -163,7 +166,7 @@ export default function ProductModal({
 
                         <div>
                             <label className="block text-xs font-semibold text-slate-600 mb-1">
-                                Unit ( in PCS / KG )
+                                Unit ( in PCS / KG etc)
                             </label>
                             <input
                                 name="unit"

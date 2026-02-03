@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaLock, FaChevronRight } from "react-icons/fa";
+import { FaUser, FaLock, FaChevronRight, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -9,26 +9,27 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default function Login() {
     const [employeeCode, setEmployeeCode] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
     const { login } = useAuth();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
 
-  try {
-    setLoading(true);
-    await login(employeeCode, password);
-    navigate("/", { replace: true });
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+        try {
+            setLoading(true);
+            await login(employeeCode, password);
+            navigate("/", { replace: true });
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
 
@@ -59,26 +60,33 @@ const handleSubmit = async (e) => {
                             <div className="relative group">
                                 <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                                 <input
-    type="text"
-    placeholder="Employee Code"
-    autoComplete="username"
-    className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
-    value={employeeCode}
-    onChange={(e) => setEmployeeCode(e.target.value)}
-/>
+                                    type="text"
+                                    placeholder="Employee Code"
+                                    autoComplete="username"
+                                    className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                                    value={employeeCode}
+                                    onChange={(e) => setEmployeeCode(e.target.value)}
+                                />
 
                             </div>
 
                             <div className="relative group">
                                 <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder="Enter your password"
                                     autoComplete="current-password"
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                                    className="w-full pl-12 pr-12 py-4 bg-slate-950/50 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 focus:outline-none"
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </button>
                             </div>
                         </div>
 

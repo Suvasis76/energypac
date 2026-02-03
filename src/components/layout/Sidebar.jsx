@@ -52,21 +52,21 @@ export default function Sidebar({ isOpen }) {
           icon={<BiImport />}
           isOpen={isOpen}
           items={[
-            { to: "/", label: "HSN Code", icon: <FaBarcode /> },
+            { to: "/HSN", label: "HSN Code", icon: <FaBarcode /> },
             { to: "/master/item", label: "Item", icon: <FaCube /> },
             { to: "/master/vendor", label: "Vendor", icon: <FaUserTie /> },
           ]}
         />
 
-        <SidebarDropdown
+        {/* <SidebarDropdown
           label="Export"
           icon={<BiExport />}
           isOpen={isOpen}
           items={[
-            { to: "/", label: "Export Data", icon: <FaFileExport /> },
-            { to: "/", label: "Export Log", icon: <FaHistory /> },
+            { to: "/export-data", label: "Export Data", icon: <FaFileExport /> },
+            { to: "/export-log", label: "Export Log", icon: <FaHistory /> },
           ]}
-        />
+        /> */}
 
         <SidebarLink to="/sales" label="Sales" icon={<FaMoneyCheckAlt />} isOpen={isOpen} />
         <SidebarLink to="/requisition" label="Requisition" icon={<FaFileAlt />} isOpen={isOpen} />

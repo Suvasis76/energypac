@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import {
   createRequisition,
   updateRequisition,
-  getRequisition, // New
-  getRequisitionAssignments, // New
-  getRequisitionItems, // New
+  getRequisition,
 } from "../../services/requisition";
 import ProductSelector from "../common/ProductSelector";
 import { HiPlus, HiTrash, HiX, HiInformationCircle } from "react-icons/hi";
@@ -29,55 +27,29 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
 
   useEffect(() => {
     const fetchData = async () => {
-      // If we are in view mode or edit mode with an ID, we might want to fetch fresh data
-      // For now, let's specifically target the requirement: "for requisition view use this api..."
       if ((viewOnly || editData) && editData?.id) {
         try {
-          // Fetch all in parallel
-          const [reqRes, assignRes, itemsRes] = await Promise.allSettled([
-            getRequisition(editData.id),
-            getRequisitionAssignments(editData.id),
-            getRequisitionItems(editData.id)
-          ]);
+          const { data } = await getRequisition(editData.id);
 
-          // Prefer data from basic editData, but if API call succeeds, overlay it
-          // actually, the user specifically asked to use these APIs for VIEW.
+          const reqDate = data.requisition_date;
+          const remarks = data.remarks || "";
 
-          let reqDate = editData.requisition_date;
-          let remarks = editData.remarks || "";
-          let items = editData.items ? [...editData.items] : [];
-
-          // Override with fresh data if available
-          if (reqRes.status === 'fulfilled') {
-            const d = reqRes.value.data;
-            reqDate = d.requisition_date;
-            remarks = d.remarks || "";
-            // Update assignment status from main req
-            if (d.is_assigned !== undefined) setIsAssigned(d.is_assigned);
+          if (data.is_assigned !== undefined) {
+            setIsAssigned(data.is_assigned);
           }
 
-          // Check assignment API as well
-          if (assignRes.status === 'fulfilled') {
-            const aData = assignRes.value.data;
-            if (aData.is_assigned !== undefined) setIsAssigned(aData.is_assigned);
-            // We could potentially use items from here if needed, but items API is preferred
-          }
-
-          // Use items from the items API if successful
-          if (itemsRes.status === 'fulfilled') {
-            // The API returns { items: [...] } based on user example
-            const iData = itemsRes.value.data;
-            if (iData.items && Array.isArray(iData.items)) {
-              items = iData.items.map(i => ({
-                product: i.product, // ID
-                product_name: i.product_name, // If needed for display
-                quantity: i.quantity,
-                remarks: i.remarks || "",
-                unit: i.unit || i.product_details?.unit || "",
-                // Keep checking for product_details if nested
-                product_code: i.product_code || i.product_details?.item_code || ""
-              }));
-            }
+          let items = [];
+          if (data.items && Array.isArray(data.items)) {
+            items = data.items.map((i) => ({
+              product: i.product,
+              product_name: i.product_name || i.product_details?.item_name,
+              product_code: i.product_code || i.product_details?.item_code,
+              unit: i.unit || i.product_details?.unit || "UNIT",
+              quantity: i.quantity,
+              remarks: i.remarks || "",
+            }));
+          } else if (editData.items) {
+            items = [...editData.items];
           }
 
           setForm({
@@ -85,21 +57,33 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
             remarks: remarks,
             items: items.length ? items : [{ ...emptyItem }],
           });
-
         } catch (error) {
           console.error("Failed to fetch details", error);
-          // Fallback to editData if API fails is already handled by initial state or below logic?
-          // Actually, let's just use what we have in editData if this fails, or show error?
-          // Current implementation: Just set what we have from props first, then update if API returns.
         }
       } else if (editData) {
-        // Standard edit setup if not fetching (tho we probably should always fetch if we have ID)
-        // For safety, let's keep the prop-based setup as immediate fallback
+        // Fallback if no ID available or logic requires it
+        setForm({
+          requisition_date: editData.requisition_date,
+          remarks: editData.remarks || "",
+          items:
+            editData.items?.map((i) => ({
+              product: i.product,
+              product_name: i.product_name,
+              quantity: i.quantity,
+              remarks: i.remarks || "",
+              unit: i.unit || i.product_details?.unit || "",
+            })) || [{ ...emptyItem }],
+        });
+        setIsAssigned(editData.is_assigned || false);
       }
     };
 
-    if (editData) {
-      // Set initial state from props immediately to avoid flicker
+    if (editData && editData.id) {
+      // While fetching, we can show existing data to avoid flicker logic is tricky
+      // Let's just run fetchData which handles it. 
+      // But strictly, we should probably set initial state from props first?
+      // The original code did set initial state then fetch.
+      // Let's do the same for smoother UX.
       setForm({
         requisition_date: editData.requisition_date,
         remarks: editData.remarks || "",
@@ -112,9 +96,21 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
           })) || [{ ...emptyItem }],
       });
       setIsAssigned(editData.is_assigned || false);
-
-      // Then fetch fresh details
       fetchData();
+    } else if (editData) {
+      // Only props
+      setForm({
+        requisition_date: editData.requisition_date,
+        remarks: editData.remarks || "",
+        items:
+          editData.items?.map((i) => ({
+            product: i.product,
+            quantity: i.quantity,
+            remarks: i.remarks || "",
+            unit: i.unit || i.product_details?.unit || "",
+          })) || [{ ...emptyItem }],
+      });
+      setIsAssigned(editData.is_assigned || false);
     } else {
       setForm({
         requisition_date: new Date().toISOString().split("T")[0],
@@ -365,11 +361,11 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
         </form>
 
         {/* MODAL FOOTER */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200  flex justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="btn-secondary"
+            className="bg-white hover:bg-slate-100 text-slate-700 font-bold py-2 px-4 rounded-lg border border-slate-300"
             disabled={submitting}
           >
             {viewOnly ? "Close" : "Cancel"}
@@ -377,7 +373,7 @@ const RequisitionModal = ({ open, onClose, editData, onSuccess, viewOnly = false
           {!viewOnly && (
             <button
               onClick={handleSubmit}
-              className="btn-primary min-w-[120px]"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg min-w-[120px]  "
               disabled={submitting}
             >
               {submitting ? (

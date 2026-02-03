@@ -13,3 +13,6 @@ export const getVendorAssignmentsByRequisition = (requisitionId) =>
 
 export const updateVendorAssignment = (id, data) =>
   axiosSecure.put(`/api/vendor-assignments/${id}`, data);
+
+export const getVendorAssignment = (id) =>
+  axiosSecure.get(`/api/vendor-assignments/${id}`);

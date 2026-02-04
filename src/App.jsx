@@ -1,17 +1,17 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import Layout from "./components/Layout.jsx";
 
-import Dashboard from "./pages/Dashboard";
-import Requisition from "./pages/Requisition";
-import Login from "./pages/Login";
-import Products from "./pages/Products";
-import Vendor from "./pages/Vendor";
-import VendorAssignment from "./pages/VendorAssignment";
-import VendorQuotations from "./pages/VendorQuotation";
-import PurchaseOrderList from "./pages/PurchaseOrderList";
-import Pending from "./pages/pending";
+import Dashboard from "./pages/Dashboard.jsx";
+import Requisition from "./pages/Requisition.jsx";
+import Login from "./pages/Login.jsx";
+import Products from "./pages/Products.jsx";
+import Vendor from "./pages/Vendor.jsx";
+import VendorAssignment from "./pages/VendorAssignment.jsx";
+import VendorQuotations from "./pages/VendorQuotation.jsx";
+import PurchaseOrderList from "./pages/PurchaseOrderList.jsx";
+import Pending from "./pages/pending.jsx";
 
 export default function App() {
   return (

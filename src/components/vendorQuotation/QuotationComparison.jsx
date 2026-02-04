@@ -13,7 +13,7 @@ const QuotationComparison = () => {
     const [selectedRequisition, setSelectedRequisition] = useState("");
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [ setError] = useState(null);
+    const [ error , setError] = useState(null);
 
     // State for Toast and Confirm
     const [toast, setToast] = useState({ open: false, type: "success", message: "" });

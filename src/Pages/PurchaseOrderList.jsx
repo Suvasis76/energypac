@@ -160,7 +160,7 @@ const PurchaseOrderList = () => {
                 [],
 
                 // --- DATA TABLE HEADERS ---
-                ["PO Number", "Date", "Vendor Name", "Vendor Code", "Req No", "Total Amount", "Status", "Item Code", "Item Name", "Quantity", "Rate", "Amount", "Received?"]
+                ["PO Number", "Date", "Vendor Name", "Vendor Code", "Req No", "Total Amount", "Status", "Item Code", "Item Name", "Quantity", "Rate", "Amount", "Purchased"]
             ];
 
             reportData.forEach(po => {

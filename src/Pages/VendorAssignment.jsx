@@ -138,6 +138,7 @@ const VendorAssignment = () => {
                 className="input"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && loadData(1)}
               />
             </div>
 

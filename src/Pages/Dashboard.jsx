@@ -72,7 +72,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">System Overview</h2>
-          <p className="text-slate-500 text-sm">Welcome back, {user?.name || "User"}. Here's what's happening today.</p>
+          <p className="text-slate-500 text-sm">Welcome back, {user?.full_name || "User"}. Here's what's happening today.</p>
         </div>
         {stats?.generated_at && (
           <div className="text-xs text-slate-500 font-medium">

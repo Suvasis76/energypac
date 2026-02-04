@@ -147,7 +147,7 @@ const Requisition = () => {
         open: true,
         type: "error",
         message: "Failed to delete requisition" + err.message,
-    
+
       });
     } finally {
       setDeleting(false);
@@ -421,6 +421,7 @@ const Requisition = () => {
               <input
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && loadData(1)}
                 placeholder="Search by req no, items..."
                 className="input"
               />
@@ -435,6 +436,7 @@ const Requisition = () => {
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && loadData(1)}
                 className="input"
               />
             </div>
@@ -644,7 +646,7 @@ const Requisition = () => {
                         type="date"
                         value={reportDates.end}
                         onChange={(e) => setReportDates({ ...reportDates, end: e.target.value })}
-                        className="input w-full text-xs"   
+                        className="input w-full text-xs"
                       />
                     </div>
                   </div>
